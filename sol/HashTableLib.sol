@@ -52,6 +52,10 @@ library HashTableLib {
           key: key,
           ptr: ptr
         });
+        assembly {
+          bucket := newBucket
+        }
+        leafNode.bucket = bucket;
         break;
       } else {
         assembly {

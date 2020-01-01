@@ -1,0 +1,33 @@
+{
+  "name": "view-executor",
+  "version": "0.1.0",
+  "description": "Extensible read-only functionality for an arbitrary smart contract system",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx mocha",
+    "build": "node build",
+    "clean": "node clean"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/raymondpulver/view-executor.git"
+  },
+  "keywords": [
+    "view",
+    "executor"
+  ],
+  "author": "Raymond Pulver IV",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/raymondpulver/view-executor/issues"
+  },
+  "homepage": "https://github.com/raymondpulver/view-executor#readme",
+  "devDependencies": {
+    "mkdirp": "^0.5.1",
+    "rimraf": "^3.0.0",
+    "solc": "^0.6.0"
+  },
+  "dependencies": {
+    "bn.js": "^5.1.1"
+  }
+}

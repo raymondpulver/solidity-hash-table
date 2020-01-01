@@ -133,7 +133,7 @@ library HashTableLib {
     return (ptr, getBTreeNodeFromPtr(ptr));
   }
   function possiblyExpandBTreePtrs(BTreeNode memory btn) internal pure {
-    if (btn.ptrs.length == 0) btn.ptrs = new uint32[](0x100);
+    if (btn.ptrs.length == 0) btn.ptrs = new uint32[](0x10);
   }
   function createHashTable() internal pure returns (HashTable memory) {
     BTreeNode memory encapsulated = allocBTreeNode();
@@ -146,9 +146,10 @@ library HashTableLib {
     }
     retval.ptr = uint32(uint256(ptr));
   }
+  bytes32 constant NIBBLE_MASK = 0x0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f;
   function lookup(HashTable memory ht, bytes32 key) internal pure returns (bool exists, bytes32 val) {
     BTreeNode memory btn = getBTreeNode(ht);
-    bytes32 hash = keccak256(abi.encodePacked(key)) & bytes32((uint256(0x1) << 0x20) - 1);
+    bytes32 hash = keccak256(abi.encodePacked(key)) & bytes32((uint256(0x1) << 0x20) - 1) & NIBBLE_MASK;
     for (uint256 i = 31; i > 27; i--) {
       if ((~bytes32((uint256(0x1) << (i + 1)*8) - 1) & hash) == 0) {
         if (btn.leafNode != 0) return (true, lookupValueFromLeafNode(btn.leafNode, key));
@@ -163,12 +164,13 @@ library HashTableLib {
   }
   function insert(HashTable memory ht, bytes32 key, bytes32 val) internal pure {
     BTreeNode memory btn = getBTreeNode(ht);
-    bytes32 hash = keccak256(abi.encodePacked(key)) & bytes32((uint256(0x1) << uint256(0x20)) - 1);
+    bytes32 hash = keccak256(abi.encodePacked(key)) & bytes32((uint256(0x1) << uint256(0x20)) - 1) & NIBBLE_MASK;
     for (uint256 i = 31; i > 27; i--) {
       if ((~bytes32((0x1 << (i + 1)*8) - 1) & hash) == 0) {
         
         btn.leafNode = toPtr(allocLeafNode());
         insertKeyValueFromLeafNode(btn.leafNode, key, val);
+        return;
       }
       possiblyExpandBTreePtrs(btn);
       uint256 b = uint256(uint8(hash[i]));

@@ -17,6 +17,7 @@ contract HashTableTest {
     emit GasUsed(start - gasleft());
     start = gasleft();
     (bool found, bytes32 val) = ht.lookup(bytes32(uint256(0x2)));
+    emit GasUsed(uint256(val));
     emit GasUsed(start - gasleft());
     start = gasleft();
     ht.insert(bytes32(uint256(0x4)), bytes32(uint256(0x5)));
@@ -25,7 +26,7 @@ contract HashTableTest {
     ht.insert(bytes32(uint256(0x5)), bytes32(uint256(0x5)));
     emit GasUsed(start - gasleft());
     emit GasUsed(callLookup(ht, bytes32(uint256(0x2))));
-		emit GasUsed(callLookup(ht, bytes32(uint256(0x5))));
+		emit GasUsed(callLookup(ht, bytes32(uint256(0x4))));
     emit GasUsed(callLookup(ht, bytes32(uint256(0x5))));
     require(found);
     if (found || !found) emit Data(val);

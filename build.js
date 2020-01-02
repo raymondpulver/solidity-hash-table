@@ -8,7 +8,7 @@ const addHexPrefix = (s) => s.substr(0, 2) === '0x' ? s : '0x' + s;
 const mkdirp = require('mkdirp');
 
 process.chdir(__dirname);
-spawnSync('npx', ['solcjs', path.join('test', 'HashTableTest.sol'), path.join('sol', 'HashTableLib.sol'), '-o', path.join('build', 'artifacts'), '--bin'], { stdio: 'inherit' });
+spawnSync('npx', ['solcjs', path.join('sol', 'BTreeExtensionLib.sol'), path.join('sol', 'BTreeNodeLib.sol'), path.join('sol', 'BucketLib.sol'), path.join('test', 'HashTableTest.sol'), path.join('sol', 'HashTableLib.sol'), '-o', path.join('build', 'artifacts'), '--bin'], { stdio: 'inherit' });
 const artifactsDir = path.join(__dirname, 'build', 'artifacts');
 mkdirp.sync(artifactsDir);
 fs.writeFileSync(path.join(__dirname, 'build', 'build.json'), JSON.stringify({

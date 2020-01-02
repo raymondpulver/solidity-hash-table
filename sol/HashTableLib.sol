@@ -36,6 +36,7 @@ library HashTableLib {
       if (leafNode.bucket == 0) return bytes32(0x0);
       Bucket memory bucket = getBucketFromPtr(leafNode.bucket);
       if (bucket.key == key) return bucket.ptr;
+      if (leafNode.next == 0) return bytes32(uint256(0x0));
       leafNode = getLeafNodeFromPtr(toUint32(leafNode.next));
     }
   }
@@ -64,6 +65,14 @@ library HashTableLib {
         if (leafNodePtr == 0) {
           leafNode = allocLeafNode();
         } else {
+          bytes32 currentBucket = leafNode.bucket;
+          assembly {
+            newBucket := currentBucket
+          }
+          if (newBucket.key == key) { 
+            newBucket.ptr = ptr;
+            return;
+          }
           leafNode = getLeafNodeFromPtr(toUint32(leafNode.next));
           bucket = leafNode.bucket;
         }

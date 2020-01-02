@@ -11,7 +11,7 @@ contract HashTableTest {
     if (success || !success) return uint256(val);
   }
   constructor() public {
-    HashTableLib.HashTable memory ht = HashTableLib.createHashTable();
+    HashTableLib.HashTable memory ht = HashTableLib.initialize();
     uint256 start = gasleft();
     ht.insert(bytes32(uint256(0x2)), bytes32(uint256(0x3)));
     emit GasUsed(start - gasleft());
@@ -28,7 +28,6 @@ contract HashTableTest {
     emit GasUsed(callLookup(ht, bytes32(uint256(0x2))));
 		emit GasUsed(callLookup(ht, bytes32(uint256(0x4))));
     emit GasUsed(callLookup(ht, bytes32(uint256(0x5))));
-    require(found);
     if (found || !found) emit Data(val);
   }
 } 

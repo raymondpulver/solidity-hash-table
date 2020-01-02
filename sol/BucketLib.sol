@@ -6,12 +6,12 @@ library BucketLib {
     bytes32 val;
     uint32 next;
   }
-  function asBucket(bytes32 ptr) internal pure returns (Bucket memory retval) {
+  function asBucket(uint32 ptr) internal pure returns (Bucket memory retval) {
     assembly {
       retval := ptr
     }
   }
-  function toPtr(Bucket memory bucket) internal pure returns (bytes32 retval) {
+  function toPtr(Bucket memory bucket) internal pure returns (uint32 retval) {
     assembly {
       retval := bucket
     }
@@ -33,14 +33,14 @@ library BucketLib {
         return bucket;
       }
       if (bucket.next == 0) {
-        Bucket memory retval = create(key, val, 0);
+        Bucket memory retval = initialize(key, val, 0);
         bucket.next = toPtr(retval);
         return retval;
       }
       ptr = bucket.next;
     }
   }
-  function create(bytes32 key, bytes32 val, uint32 next) internal pure returns (Bucket memory) {
+  function initialize(bytes32 key, bytes32 val, uint32 next) internal pure returns (Bucket memory) {
     return Bucket({
       key: key,
       val: val,

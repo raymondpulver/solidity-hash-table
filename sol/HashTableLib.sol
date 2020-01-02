@@ -12,8 +12,8 @@ library HashTableLib {
   struct HashTable {
     uint32 ptr;
   }
-  function create() internal pure returns (HashTable memory) {
-    BTreeNodeLib.BTreeNode memory node = BTreeNodeLib.create();
+  function initialize() internal pure returns (HashTable memory) {
+    BTreeNodeLib.BTreeNode memory node = BTreeNodeLib.initialize();
     return HashTable({
       ptr: node.toPtr()
     });
@@ -24,42 +24,43 @@ library HashTableLib {
     for (uint256 i = 31; i > 27; i--) {
       if (btn.leafNode == 0) {
         if (btn.ptrs.length == 0) return (false, bytes32(uint256(0x0)));
-        uint32 ptr = btn.ptrs[hash[i]];
+        uint32 ptr = btn.ptrs[uint8(hash[i])];
         if (ptr == 0) return (false, bytes32(uint256(0x0)));
         btn = ptr.asNode();
       } else {
         BTreeExtensionLib.BTreeExtension memory extension = btn.leafNode.asExtension();
-        if (extension.getInputHash(i) == hash) return (true, extension.ptr.lookupValue(key));
+        if (extension.toInputHash(i) == hash) return (true, extension.ptr.lookupValue(key));
         return (false, extension.ptr.lookupValue(key));
       }
     }
   }
   function insert(HashTable memory ht, bytes32 key, bytes32 val) internal pure {
-    BTreeNodeLib.BTreeNode memory btn = btn.ptr.asNode();
+    BTreeNodeLib.BTreeNode memory btn = ht.ptr.asNode();
     bytes32 hash = keccak256(abi.encodePacked(key)) & bytes32((uint256(0x1) << uint256(0x20)) - 1) & NIBBLE_MASK;
     for (uint256 i = 31; i > 27; i--) {
       if (btn.leafNode != 0) {
         BTreeExtensionLib.BTreeExtension memory extension = btn.leafNode.asExtension();
         btn.leafNode = 0;
         btn.expand();
-        BTreeNodeLib.BTreeNode memory node = BTreeNodeLib.create();
+        BTreeNodeLib.BTreeNode memory node = BTreeNodeLib.initialize();
         btn.ptrs[extension.current] = node.toPtr();
-        BTreeExtensionLib.BTreeExtension memory newExtension = BTreeExtensionLib.create(hash, i - 1, extension.ptr);
+        BTreeExtensionLib.BTreeExtension memory newExtension = BTreeExtensionLib.initialize(hash, i - 1, extension.ptr);
         node.leafNode = newExtension.toPtr();
-        return (true, extension.ptr.insertKeyValue(key, val));
+        extension.ptr.insertKeyValue(key, val);
+        return;
       } else {
         if (btn.ptrs.length == 0) {
-          BucketLib.Bucket memory bucket = BucketLib.create(key, val, 0);
-          BTreeExtensionLib.BTreeExtension memory extension = BTreeExtensionLib.create(hash, i, bucket.toPtr());
+          BucketLib.Bucket memory bucket = BucketLib.initialize(key, val, 0);
+          BTreeExtensionLib.BTreeExtension memory extension = BTreeExtensionLib.initialize(hash, i, bucket.toPtr());
           btn.leafNode = extension.toPtr();
         } else {
-          uint32 ptr = btn.ptrs[hash[i]];
+          uint32 ptr = btn.ptrs[uint8(hash[i])];
           if (ptr == 0) {
-            BucketLib.Bucket memory bucket = BucketLib.create(key, val, 0);
-            BTreeExtensionLib.BTreeExtension memory extension = BTreeExtensionLib.create(hash, i, bucket.toPtr())
-            BTreeNodeLib.BTreeNode memory node = BTreeNodeLib.create();
+            BucketLib.Bucket memory bucket = BucketLib.initialize(key, val, 0);
+            BTreeExtensionLib.BTreeExtension memory extension = BTreeExtensionLib.initialize(hash, i, bucket.toPtr());
+            BTreeNodeLib.BTreeNode memory node = BTreeNodeLib.initialize();
             node.leafNode = extension.toPtr();
-            btn.ptrs[hash[i]] = node.toPtr();
+            btn.ptrs[uint8(hash[i])] = node.toPtr();
           } else {
             btn = ptr.asNode();
           }

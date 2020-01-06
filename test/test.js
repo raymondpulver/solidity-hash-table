@@ -17,6 +17,6 @@ describe('solidity hash table', () => {
 			data: src
 		}]);
 		const receipt = await call('eth_getTransactionReceipt', [ txHash ]);
-		receipt.logs.forEach((v) => console.log(Number(v.topics[1])));
+		receipt.logs.forEach((v) => console.log((v.topics[1])));
 	});
 });

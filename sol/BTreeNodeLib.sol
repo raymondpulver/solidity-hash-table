@@ -24,7 +24,7 @@ library BTreeNodeLib {
   function initialize() internal pure returns (BTreeNode memory) {
     return BTreeNode({
       leafNode: uint256(0x0),
-      ptrs: new uint256[](0x10)
+      ptrs: new uint256[](0x0)
     });
   }
   function get(BTreeNode memory btn, uint256 i) internal pure returns (uint256 ptr) {

@@ -2,32 +2,31 @@ pragma solidity ^0.6.0;
 
 library BTreeExtensionLib {
   struct BTreeExtension {
-    uint8 current;
-    uint32 prev;
-    uint32 next;
-    uint32 ptr;
+    uint256 current;
+    uint256 prev;
+    uint256 next;
+    uint256 ptr;
   }
-  function asExtension(uint32 ptr) internal pure returns (BTreeExtension memory retval) {
+  function asExtension(uint256 ptr) internal pure returns (BTreeExtension memory retval) {
     assembly {
       retval := ptr
     }
   }
-  function toPtr(BTreeExtension memory ext) internal pure returns (uint32 retval) {
+  function toPtr(BTreeExtension memory ext) internal pure returns (uint256 retval) {
     assembly {
       retval := ext
     }
   }
-  function initialize(bytes32 hash, uint256 byteIndex, uint32 ptr) internal pure returns (BTreeExtension memory) {
-    uint256 nextMask = uint256(bytes32(int256(-1))) << ((32 - byteIndex)*8);
+  function initialize(uint256 hash, uint256 byteIndex, uint256 ptr) internal pure returns (BTreeExtension memory) {
+    uint256 nextMask = uint256(-1) << ((0x20 - byteIndex)*8);
     return BTreeExtension({
-      current: uint8(hash[byteIndex]),
-      prev: uint32(uint256(bytes32(((~nextMask) >> 8)) & hash)),
-      next: uint32(uint256(bytes32(nextMask) & hash)),
+      current: uint256(uint8(bytes32(hash)[byteIndex])),
+      prev: (~nextMask >> 8) & hash,
+      next: nextMask & hash,
       ptr: ptr
     });
   }
-  function toInputHash(BTreeExtension memory ext, uint256 byteIndex) internal pure returns (bytes32) {
-    return bytes32(uint256(ext.current) << ((31 - byteIndex)*8) | ext.prev | ext.next);
+  function toInputHash(BTreeExtension memory ext, uint256 byteIndex) internal pure returns (uint256) {
+    return (ext.current << ((31 - byteIndex)*8)) | ext.prev | ext.next;
   }
 }
-

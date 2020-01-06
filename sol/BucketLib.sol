@@ -4,19 +4,19 @@ library BucketLib {
   struct Bucket {
     bytes32 key;
     bytes32 val;
-    uint32 next;
+    uint256 next;
   }
-  function asBucket(uint32 ptr) internal pure returns (Bucket memory retval) {
+  function asBucket(uint256 ptr) internal pure returns (Bucket memory retval) {
     assembly {
       retval := ptr
     }
   }
-  function toPtr(Bucket memory bucket) internal pure returns (uint32 retval) {
+  function toPtr(Bucket memory bucket) internal pure returns (uint256 retval) {
     assembly {
       retval := bucket
     }
   }
-  function lookupValue(uint32 ptr, bytes32 key) internal pure returns (bytes32) {
+  function lookupValue(uint256 ptr, bytes32 key) internal pure returns (bytes32) {
     Bucket memory bucket = asBucket(ptr);
     while (true) {
       asBucket(ptr);
@@ -25,7 +25,7 @@ library BucketLib {
       ptr = bucket.next;
     }
   }
-	function insertKeyValue(uint32 ptr, bytes32 key, bytes32 val) internal pure returns (Bucket memory) {
+	function insertKeyValue(uint256 ptr, bytes32 key, bytes32 val) internal pure returns (Bucket memory) {
     while (true) {
       Bucket memory bucket = asBucket(ptr);
       if (bucket.key == key) {
@@ -40,7 +40,7 @@ library BucketLib {
       ptr = bucket.next;
     }
   }
-  function initialize(bytes32 key, bytes32 val, uint32 next) internal pure returns (Bucket memory) {
+  function initialize(bytes32 key, bytes32 val, uint256 next) internal pure returns (Bucket memory) {
     return Bucket({
       key: key,
       val: val,

@@ -28,7 +28,7 @@
     "ganache-cli": "^6.4.4",
     "kool-makerpccall": "^0.1.1",
     "mkdirp": "^0.5.1",
-    "mocha": "^6.2.2",
+    "mocha": "^10.2.0",
     "rimraf": "^3.0.0",
     "solc": "^0.6.0"
   },
